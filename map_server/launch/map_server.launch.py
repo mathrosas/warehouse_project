@@ -12,7 +12,7 @@ def generate_launch_description():
     map_dir   = get_package_share_directory('map_server') + '/config'
     map_file  = [ map_dir, '/', map_file_name ]
 
-    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
     
     rviz_config_dir = os.path.join(get_package_share_directory('map_server'), 'rviz', 'map_display.rviz')
 

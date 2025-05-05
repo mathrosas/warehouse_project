@@ -10,7 +10,7 @@ def generate_launch_description():
     cartographer_config_dir = os.path.join(get_package_share_directory('cartographer_slam'), 'config')
     configuration_basename = 'cartographer_sim.lua'
 
-    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
     
     rviz_config_dir = os.path.join(get_package_share_directory('cartographer_slam'), 'rviz', 'mapping.rviz')
 
