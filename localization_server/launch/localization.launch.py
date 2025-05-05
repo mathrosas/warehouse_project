@@ -57,17 +57,17 @@ def generate_launch_description():
                         {'node_names': ['map_server', 'amcl']}]
         ),
 
-        # DeclareLaunchArgument(
-        #     "rviz_config_dir", 
-        #     default_value="", 
-        #     description="TRviz"
-        # ),
+        DeclareLaunchArgument(
+            "rviz_config_dir", 
+            default_value="", 
+            description="TRviz"
+        ),
 
-        # Node(
-        #     package='rviz2',
-        #     executable='rviz2',
-        #     name='rviz2',
-        #     arguments=['-d', rviz_config_dir],
-        #     parameters=[{'use_sim_time': use_sim_time}],
-        #     output='screen'),
+        Node(
+            package='rviz2',
+            executable='rviz2',
+            name='rviz2',
+            arguments=['-d', rviz_config_dir],
+            parameters=[{'use_sim_time': use_sim_time}],
+            output='screen'),
     ])
