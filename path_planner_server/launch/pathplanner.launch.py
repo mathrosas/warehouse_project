@@ -11,6 +11,7 @@ def generate_launch_description():
     bt_navigator_yaml = os.path.join(get_package_share_directory('path_planner_server'), 'config', 'bt_navigator_sim.yaml')
     planner_yaml = os.path.join(get_package_share_directory('path_planner_server'), 'config', 'planner_sim.yaml')
     recovery_yaml = os.path.join(get_package_share_directory('path_planner_server'), 'config', 'recoveries_sim.yaml')
+    filters_yaml = os.path.join(get_package_share_directory('path_planner_server'), 'config', 'filters_sim.yaml')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
@@ -57,6 +58,22 @@ def generate_launch_description():
             output='screen',
             parameters=[bt_navigator_yaml, {'use_sim_time': use_sim_time}]
         ),
+
+        Node(
+            package='nav2_map_server',
+            executable='map_server',
+            name='filter_mask_server',
+            output='screen',
+            emulate_tty=True,
+            parameters=[filters_yaml]),
+
+        Node(
+            package='nav2_map_server',
+            executable='costmap_filter_info_server',
+            name='costmap_filter_info_server',
+            output='screen',
+            emulate_tty=True,
+            parameters=[filters_yaml]),
 
         Node(
             package='nav2_lifecycle_manager',
