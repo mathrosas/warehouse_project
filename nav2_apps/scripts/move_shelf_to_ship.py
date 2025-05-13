@@ -122,7 +122,8 @@ class RobotMover(Node):
 # Shelf positions for picking
 shelf_positions = {
     "init": [0.0, 0.0, 0.0, 1.0],
-    "loading_position": [5.70, -0.40, -0.71, 0.72]
+    "loading_position": [5.65, -0.40, -0.71, 0.72],
+    "shipping_position": [2.52769, 1.32043, 0.696154, 0.717892]
     }
 
 def main():
@@ -222,7 +223,83 @@ def main():
 
     while not navigator.isTaskComplete():
         pass
+    
+    # Got to the shipping position
+    request_item_location = 'shipping_position'
+    shelf_item_pose = PoseStamped()
+    shelf_item_pose.header.frame_id = 'map'
+    shelf_item_pose.header.stamp = navigator.get_clock().now().to_msg()
+    shelf_item_pose.pose.position.x = shelf_positions[request_item_location][0]
+    shelf_item_pose.pose.position.y = shelf_positions[request_item_location][1]
+    shelf_item_pose.pose.orientation.z = shelf_positions[request_item_location][2]
+    shelf_item_pose.pose.orientation.w = shelf_positions[request_item_location][3]
+    print('Moving robot to ' + request_item_location + '.')
+    navigator.goToPose(shelf_item_pose)
 
+    i = 0
+    while not navigator.isTaskComplete():
+        i = i + 1
+        feedback = navigator.getFeedback()
+        if feedback and i % 5 == 0:
+            print('Estimated time of arrival at ' + request_item_location +
+                  ' for worker: ' + '{0:.0f}'.format(
+                      Duration.from_msg(feedback.estimated_time_remaining).nanoseconds / 1e9)
+                  + ' seconds.')
+
+    result = navigator.getResult()
+    if result == TaskResult.SUCCEEDED:
+        print('Unloading the shelf.')
+        footprint_publisher.publish_polygon('circle')
+        elevator_publisher.drop()
+        mover.move_back()
+
+    elif result == TaskResult.CANCELED:
+        print('Task at ' + request_item_location +
+              ' was canceled. Returning to staging point...')
+        initial_pose.header.stamp = navigator.get_clock().now().to_msg()
+        navigator.goToPose(initial_pose)
+
+    elif result == TaskResult.FAILED:
+        print('Task at ' + request_item_location + ' failed!')
+        exit(-1)
+
+
+     # Got to the init position
+    request_item_location = 'init'
+    shelf_item_pose = PoseStamped()
+    shelf_item_pose.header.frame_id = 'map'
+    shelf_item_pose.header.stamp = navigator.get_clock().now().to_msg()
+    shelf_item_pose.pose.position.x = shelf_positions[request_item_location][0]
+    shelf_item_pose.pose.position.y = shelf_positions[request_item_location][1]
+    shelf_item_pose.pose.orientation.z = shelf_positions[request_item_location][2]
+    shelf_item_pose.pose.orientation.w = shelf_positions[request_item_location][3]
+    print('Moving robot to ' + request_item_location + '.')
+    navigator.goToPose(shelf_item_pose)
+
+    i = 0
+    while not navigator.isTaskComplete():
+        i = i + 1
+        feedback = navigator.getFeedback()
+        if feedback and i % 5 == 0:
+            print('Estimated time of arrival at ' + request_item_location +
+                  ' for worker: ' + '{0:.0f}'.format(
+                      Duration.from_msg(feedback.estimated_time_remaining).nanoseconds / 1e9)
+                  + ' seconds.')
+
+    result = navigator.getResult()
+    if result == TaskResult.SUCCEEDED:
+        print('Task finished.')
+
+    elif result == TaskResult.CANCELED:
+        print('Task at ' + request_item_location +
+              ' was canceled. Returning to staging point...')
+        initial_pose.header.stamp = navigator.get_clock().now().to_msg()
+        navigator.goToPose(initial_pose)
+
+    elif result == TaskResult.FAILED:
+        print('Task at ' + request_item_location + ' failed!')
+        exit(-1)
+    
     exit(0)
 
 
