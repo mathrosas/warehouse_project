@@ -122,8 +122,7 @@ class RobotMover(Node):
 # Shelf positions for picking
 shelf_positions = {
     "init": [0.0, 0.0, 0.0, 1.0],
-    "loading_position": [5.63071, -0.503011, -0.701128, 0.713036],
-    "shipping_position": [2.52769, 1.32043, 0.696154, 0.717892]
+    "loading_position": [5.70, -0.40, -0.71, 0.72]
     }
 
 def main():

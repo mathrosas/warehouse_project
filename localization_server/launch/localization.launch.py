@@ -2,7 +2,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import Node
-from launch.actions import DeclareLaunchArgument, ExecuteProcess
+from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
@@ -75,10 +75,5 @@ def generate_launch_description():
             package='attach_service',
             executable='attach_service_server',
             name='attach_service_server',
-            output='screen'),
-
-        ExecuteProcess(
-            cmd=['ros2', 'service', 'call', 
-                 '/reinitialize_global_localization', 'std_srvs/srv/Empty'],         
             output='screen')
     ])

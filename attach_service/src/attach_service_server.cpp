@@ -104,7 +104,7 @@ private:
       double dist = std::hypot(x, y);
       double yaw_err = std::atan2(y, x);
 
-      if (dist <= 0.015) {
+      if (dist <= 0.03) {
         // Stop
         vel_pub_->publish(geometry_msgs::msg::Twist());
         break;
@@ -113,7 +113,7 @@ private:
       // Publish command
       geometry_msgs::msg::Twist cmd;
       cmd.linear.x = std::clamp(dist, 0.0, 0.3);
-      cmd.angular.z = -0.6 * yaw_err;
+      cmd.angular.z = -0.5 * yaw_err;
       vel_pub_->publish(cmd);
       rate.sleep();
     }
