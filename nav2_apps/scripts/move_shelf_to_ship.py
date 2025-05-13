@@ -1,14 +1,10 @@
 import time
-from copy import deepcopy
-
-from geometry_msgs.msg import PoseStamped
-from rclpy.duration import Duration
 import rclpy
+from rclpy.duration import Duration
 from rclpy.node import Node
 from attach_service.srv import GoToLoading
-from geometry_msgs.msg import Polygon, Point32
+from geometry_msgs.msg import Polygon, Point32, PoseStamped, Twist
 from std_msgs.msg import String
-from geometry_msgs.msg import Twist
 
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 
@@ -72,6 +68,7 @@ class PolygonPublisher(Node):
         self.global_publisher_.publish(polygon_msg)
         self.local_publisher_.publish(polygon_msg)
         self.get_logger().info(f'Publishing polygon footprint of type {mode}')
+        time.sleep(1)
         return None
 
 class ElevatorPublisher(Node):
@@ -122,7 +119,7 @@ class RobotMover(Node):
 # Shelf positions for picking
 shelf_positions = {
     "init": [0.0, 0.0, 0.0, 1.0],
-    "loading_position": [5.65, -0.40, -0.71, 0.72],
+    "loading_position": [5.68, -0.50, -0.71, 0.72],
     "shipping_position": [2.52769, 1.32043, 0.696154, 0.717892]
     }
 
