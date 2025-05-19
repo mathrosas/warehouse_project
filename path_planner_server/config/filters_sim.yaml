@@ -1,6 +1,6 @@
 costmap_filter_info_server:
   ros__parameters:
-    use_sim_time: true
+    use_sim_time: True
     filter_info_topic: "/costmap_filter_info"
     type: 0
     mask_topic: "/keepout_filter_mask"
