@@ -99,12 +99,12 @@ private:
       }
 
       // Compute offset (0.5 m for gripper)
-      double x = t.transform.translation.x + 0.5;
+      double x = t.transform.translation.x + 0.3;
       double y = t.transform.translation.y;
       double dist = std::hypot(x, y);
       double yaw_err = std::atan2(y, x);
 
-      if (dist <= 0.03) {
+      if (dist <= 0.05) {
         // Stop
         vel_pub_->publish(geometry_msgs::msg::Twist());
         break;
@@ -112,7 +112,7 @@ private:
 
       // Publish command
       geometry_msgs::msg::Twist cmd;
-      cmd.linear.x = std::clamp(dist, 0.0, 0.3);
+      cmd.linear.x = 0.2;
       cmd.angular.z = -0.5 * yaw_err;
       vel_pub_->publish(cmd);
       rate.sleep();
