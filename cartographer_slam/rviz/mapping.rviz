@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /Map1/Topic1
         - /LaserScan1/Topic1
       Splitter Ratio: 0.5
     Tree Height: 553
@@ -55,10 +56,10 @@ Visualization Manager:
       Name: Map
       Topic:
         Depth: 5
-        Durability Policy: Volatile
+        Durability Policy: Transient Local
         Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
+        History Policy: Keep All
+        Reliability Policy: Best Effort
         Value: /map
       Update Topic:
         Depth: 5
@@ -83,9 +84,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 8000
+      Max Intensity: 4569
       Min Color: 0; 0; 0
-      Min Intensity: 0
+      Min Intensity: 246
       Name: LaserScan
       Position Transformer: XYZ
       Selectable: true
@@ -106,31 +107,57 @@ Visualization Manager:
       Enabled: true
       Frame Timeout: 15
       Frames:
-        All Enabled: false
+        All Enabled: true
         map:
           Value: true
-        odom:
-          Value: false
         robot_base_docking_contact_link:
-          Value: false
+          Value: true
         robot_base_footprint:
           Value: true
         robot_base_link:
-          Value: false
-        robot_evelator_base_link:
-          Value: false
+          Value: true
+        robot_docking_station_laser:
+          Value: true
+        robot_docking_station_laser_noisy:
+          Value: true
+        robot_docking_station_laser_noisy_0:
+          Value: true
+        robot_elevator_base_link:
+          Value: true
+        robot_elevator_platform_link:
+          Value: true
         robot_front_cover_link:
-          Value: false
+          Value: true
         robot_front_laser_base_link:
-          Value: false
+          Value: true
+        robot_front_laser_link:
+          Value: true
+        robot_front_rgbd_camera_depth_frame:
+          Value: true
+        robot_front_rgbd_camera_depth_optical_frame:
+          Value: true
+        robot_front_rgbd_camera_link:
+          Value: true
+        robot_front_rgbd_camera_rgb_base_link:
+          Value: true
+        robot_front_rgbd_camera_rgb_optical_frame:
+          Value: true
+        robot_imu_link:
+          Value: true
+        robot_left_wheel_link:
+          Value: true
+        robot_odom:
+          Value: true
         robot_omni_backwheel_link:
-          Value: false
+          Value: true
         robot_omni_front_leftwheel_link:
-          Value: false
+          Value: true
         robot_omni_front_rightwheel_link:
-          Value: false
+          Value: true
+        robot_right_wheel_link:
+          Value: true
         robot_top_cover_link:
-          Value: false
+          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
@@ -138,15 +165,28 @@ Visualization Manager:
       Show Names: true
       Tree:
         map:
-          odom:
+          robot_odom:
             robot_base_footprint:
               robot_base_link:
-                robot_evelator_base_link:
-                  {}
+                robot_elevator_base_link:
+                  robot_elevator_platform_link:
+                    {}
                 robot_front_cover_link:
                   robot_base_docking_contact_link:
                     {}
                 robot_front_laser_base_link:
+                  {}
+                robot_front_rgbd_camera_rgb_base_link:
+                  robot_front_rgbd_camera_depth_frame:
+                    robot_front_rgbd_camera_depth_optical_frame:
+                      {}
+                  robot_front_rgbd_camera_link:
+                    {}
+                  robot_front_rgbd_camera_rgb_optical_frame:
+                    {}
+                robot_imu_link:
+                  {}
+                robot_left_wheel_link:
                   {}
                 robot_omni_backwheel_link:
                   {}
@@ -154,8 +194,18 @@ Visualization Manager:
                   {}
                 robot_omni_front_rightwheel_link:
                   {}
+                robot_right_wheel_link:
+                  {}
+              robot_front_laser_link:
+                {}
               robot_top_cover_link:
                 {}
+            robot_docking_station_laser:
+              {}
+            robot_docking_station_laser_noisy:
+              {}
+            robot_docking_station_laser_noisy_0:
+              {}
       Update Interval: 0
       Value: true
   Enabled: true
@@ -204,25 +254,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 9.574191093444824
+      Distance: 10
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 2.8444783687591553
-        Y: -0.8615382313728333
-        Z: -0.06599704176187515
+        X: 2.225245952606201
+        Y: -1.5417182445526123
+        Z: 0.00013965644757263362
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.4853975772857666
+      Pitch: 1.5697963237762451
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 6.253582954406738
+      Yaw: 0
     Saved: ~
 Window Geometry:
   Displays:

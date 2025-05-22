@@ -3,16 +3,15 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import Node
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PythonExpression
 
 def generate_launch_description():
-    
-    map_file = os.path.join(get_package_share_directory('map_server'), 'config', 'warehouse_map_sim.yaml')
-    map_file_name = LaunchConfiguration('map_file', default='warehouse_map_sim.yaml')
-    map_dir   = get_package_share_directory('map_server') + '/config'
-    map_file  = [ map_dir, '/', map_file_name ]
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+
+    map_dir   = get_package_share_directory('map_server') + '/config'
+    map_file_name = PythonExpression(["'warehouse_map_sim.yaml' if '", use_sim_time, "'.lower() == 'true' else 'warehouse_map_real.yaml'"])
+    map_file  = [ map_dir, '/', map_file_name ]
     
     rviz_config_dir = os.path.join(get_package_share_directory('map_server'), 'rviz', 'map_display.rviz')
 

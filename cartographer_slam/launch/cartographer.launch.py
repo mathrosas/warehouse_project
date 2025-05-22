@@ -3,14 +3,15 @@ from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PythonExpression
 
 def generate_launch_description():
 
+    use_sim_time = LaunchConfiguration('use_sim_time', default='True')
+    
     cartographer_config_dir = os.path.join(get_package_share_directory('cartographer_slam'), 'config')
-    configuration_basename = 'cartographer_sim.lua'
 
-    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+    configuration_basename = PythonExpression(["'cartographer_sim.lua' if '", use_sim_time,"'.lower() == 'true' else 'cartographer_real.lua'"])
     
     rviz_config_dir = os.path.join(get_package_share_directory('cartographer_slam'), 'rviz', 'mapping.rviz')
 
@@ -54,5 +55,5 @@ def generate_launch_description():
             arguments=['-d', rviz_config_dir],
             parameters=[{'use_sim_time': use_sim_time}],
             output='screen'
-        ),
+        )
     ]) 
