@@ -16,9 +16,9 @@
 
 using namespace std::placeholders;
 
-class AttachService : public rclcpp::Node {
+class ApproachService : public rclcpp::Node {
 public:
-  AttachService() : Node("attach_service_server") {
+  ApproachService() : Node("approach_service_server") {
     // TF buffer & listener
     tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
     tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
@@ -27,20 +27,19 @@ public:
 
     // Service
     srv_ = this->create_service<attach_service::srv::GoToLoading>(
-        "/attach_service",
-        std::bind(&AttachService::handle_service, this, _1, _2));
+        "/approach_service",
+        std::bind(&ApproachService::handle_service, this, _1, _2));
 
     // Laser subscription
     laser_sub_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
-        "/scan", 10, std::bind(&AttachService::laser_callback, this, _1));
+        "/scan", 10, std::bind(&ApproachService::laser_callback, this, _1));
 
     // Publishers
-    vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>(
-        "/diffbot_base_controller/cmd_vel_unstamped", 1);
+    vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 1);
     elevator_pub_ =
         this->create_publisher<std_msgs::msg::String>("/elevator_up", 1);
 
-    RCLCPP_INFO(this->get_logger(), "Attach service (sync) is ready.");
+    RCLCPP_INFO(this->get_logger(), "Approach service (sync) is ready.");
   }
 
 private:
@@ -51,7 +50,7 @@ private:
     leg_indices_.clear();
     bool in_blob = false;
     int blob_start = 0;
-    const double INT_THRESH = 100.0;
+    const double INT_THRESH = 3500.0;
     for (int i = 0; i < (int)last_intensities_.size(); ++i) {
       if (last_intensities_[i] > INT_THRESH) {
         if (!in_blob) {
@@ -63,11 +62,9 @@ private:
         leg_indices_.push_back((blob_start + i) / 2);
       }
     }
-    RCLCPP_INFO(get_logger(), "Scan: ranges=%zu intensities=%zu",
-                msg->ranges.size(), msg->intensities.size());
   }
 
-  // Synchronous handle_service: block until attach complete
+  // Synchronous handle_service: block until approach complete
   void handle_service(
       const std::shared_ptr<attach_service::srv::GoToLoading::Request> /*req*/,
       std::shared_ptr<attach_service::srv::GoToLoading::Response> response) {
@@ -82,12 +79,13 @@ private:
 
     // 2) Publish cart_frame once
     if (!publish_cart_frame()) {
+      RCLCPP_WARN(this->get_logger(), "Not possible to publish cart_frame.");
       response->complete = false;
       return;
     }
 
     // 3) Approach the cart_frame synchronously
-    rclcpp::Rate rate(10); // 10 Hz loop
+    rclcpp::Rate rate(5); // 5 Hz loop
     while (rclcpp::ok()) {
       geometry_msgs::msg::TransformStamped t;
       try {
@@ -120,8 +118,8 @@ private:
       rate.sleep();
     }
 
-    // 4) Attach complete: publish elevator_up and respond
-    RCLCPP_INFO(this->get_logger(), "Attach complete");
+    // 4) Approach complete: publish elevator_up and respond
+    RCLCPP_INFO(this->get_logger(), "Approach complete");
     std_msgs::msg::String up_msg;
     up_msg.data = "up";
     elevator_pub_->publish(up_msg);
@@ -131,8 +129,10 @@ private:
 
   // Broadcast cart_frame based on last laser readings
   bool publish_cart_frame() {
-    if (leg_indices_.size() < 2)
+    if (leg_indices_.size() < 2) {
+      RCLCPP_WARN(this->get_logger(), "Leg indices less than 2.");
       return false;
+    }
     int idx1 = leg_indices_[0], idx2 = leg_indices_[1];
     double angle_min = -M_PI;
     double angle_inc = (2 * M_PI) / last_ranges_.size();
@@ -144,24 +144,25 @@ private:
     double mid_y = (r1 * sin(a1) + r2 * sin(a2)) / 2.0;
 
     geometry_msgs::msg::PointStamped laser_pt, odom_pt;
-    laser_pt.header.frame_id = "robot_front_laser_base_link";
+    laser_pt.header.frame_id = "robot_front_laser_link";
     laser_pt.header.stamp = this->now();
     laser_pt.point.x = mid_x;
     laser_pt.point.y = mid_y;
 
     try {
       auto tf = tf_buffer_->lookupTransform(
-          "odom", "robot_front_laser_base_link", tf2::TimePointZero,
+          "robot_odom", "robot_front_laser_link", tf2::TimePointZero,
           tf2::durationFromSec(0.5));
       tf2::doTransform(laser_pt, odom_pt, tf);
       geometry_msgs::msg::TransformStamped cart_tf;
       cart_tf.header.stamp = this->now();
-      cart_tf.header.frame_id = "odom";
+      cart_tf.header.frame_id = "robot_odom";
       cart_tf.child_frame_id = "cart_frame";
       cart_tf.transform.translation.x = odom_pt.point.x;
       cart_tf.transform.translation.y = odom_pt.point.y;
       cart_tf.transform.rotation.w = 1.0;
       tf_static_broadcaster_->sendTransform(cart_tf);
+      rclcpp::sleep_for(std::chrono::milliseconds(100));
       return true;
     } catch (const tf2::TransformException &ex) {
       RCLCPP_ERROR(this->get_logger(), "TF error: %s", ex.what());
@@ -184,7 +185,7 @@ private:
 
 int main(int argc, char *argv[]) {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<AttachService>());
+  rclcpp::spin(std::make_shared<ApproachService>());
   rclcpp::shutdown();
   return 0;
 }

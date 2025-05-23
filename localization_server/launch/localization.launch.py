@@ -16,6 +16,8 @@ def generate_launch_description():
     amcl_file = [amcl_dir, '/', amcl_yaml]
 
     use_sim_time = PythonExpression(["'true' if '", map_file_name, "'.lower().endswith('sim.yaml') else 'false'"])
+
+    attach_service = PythonExpression(["'attach_service_server' if '", map_file_name, "'.lower().endswith('sim.yaml') else 'approach_service_server'"])
     
     rviz_config_dir = os.path.join(get_package_share_directory('localization_server'), 'rviz', 'localization_config.rviz')
 
@@ -76,7 +78,7 @@ def generate_launch_description():
 
         Node(
             package='attach_service',
-            executable='attach_service_server',
-            name='attach_service_server',
+            executable=attach_service,
+            name=attach_service,
             output='screen')
     ])

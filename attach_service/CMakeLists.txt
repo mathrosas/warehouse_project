@@ -35,11 +35,16 @@ endif()
 add_executable(attach_service_server src/attach_service_server.cpp)
 ament_target_dependencies(attach_service_server rclcpp sensor_msgs geometry_msgs nav_msgs std_srvs tf2_ros tf2_geometry_msgs)
 
+add_executable(approach_service_server src/approach_service_server.cpp)
+ament_target_dependencies(approach_service_server rclcpp sensor_msgs geometry_msgs nav_msgs std_srvs tf2_ros tf2_geometry_msgs)
+
 rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")
 target_link_libraries(attach_service_server ${cpp_typesupport_target})
+target_link_libraries(approach_service_server ${cpp_typesupport_target})
 
 install(TARGETS
    attach_service_server
+   approach_service_server
    DESTINATION lib/${PROJECT_NAME}
 )
 

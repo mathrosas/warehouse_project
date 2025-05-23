@@ -1,14 +1,10 @@
 import time
-from copy import deepcopy
-
-from geometry_msgs.msg import PoseStamped
-from rclpy.duration import Duration
 import rclpy
+from rclpy.duration import Duration
 from rclpy.node import Node
 from attach_service.srv import GoToLoading
-from geometry_msgs.msg import Polygon, Point32
+from geometry_msgs.msg import Polygon, Point32, PoseStamped, Twist
 from std_msgs.msg import String
-from geometry_msgs.msg import Twist
 
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 
@@ -16,7 +12,7 @@ from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 class ClientAsync(Node):
     def __init__(self):
         super().__init__('go_to_loading')
-        self.client = self.create_client(GoToLoading, 'attach_service')
+        self.client = self.create_client(GoToLoading, 'approach_service')
         while not self.client.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('Service not available, waiting again...')
 
@@ -31,47 +27,36 @@ class PolygonPublisher(Node):
         self.local_publisher_ = self.create_publisher(Polygon, '/local_costmap/footprint', 10)
         self.timer = self.create_timer(1, self.publish_polygon)
 
-        self.square_size = 0.9
-        self.half_size = self.square_size / 2 
+        self.robot_side = 0.250
+        self.cart_side = 0.450
 
-        self.circle_shape = [
-            Point32(x=0.25, y=0.0, z=0.0),
-            Point32(x=0.23096988312782168, y=0.09567085809127245, z=0.0),
-            Point32(x=0.1767766952966369, y=0.17677669529663687, z=0.0),
-            Point32(x=0.09567085809127246, y=0.23096988312782168, z=0.0),
-            Point32(x=0.0, y=0.25, z=0.0),
-            Point32(x=-0.09567085809127243, y=0.23096988312782168, z=0.0),
-            Point32(x=-0.17677669529663687, y=0.1767766952966369, z=0.0),
-            Point32(x=-0.23096988312782168, y=0.09567085809127247, z=0.0),
-            Point32(x=-0.25, y=0.0, z=0.0),
-            Point32(x=-0.2309698831278217, y=-0.09567085809127242, z=0.0),
-            Point32(x=-0.17677669529663692, y=-0.17677669529663687, z=0.0),
-            Point32(x=-0.09567085809127258, y=-0.23096988312782163, z=0.0),
-            Point32(x=0.0, y=-0.25, z=0.0),
-            Point32(x=0.0956708580912725, y=-0.23096988312782166, z=0.0),
-            Point32(x=0.17677669529663684, y=-0.17677669529663692, z=0.0),
-            Point32(x=0.23096988312782163, y=-0.0956708580912726, z=0.0)
+        self.robot_shape = [
+            Point32(x=-self.robot_side, y=self.robot_side, z=0.0), 
+            Point32(x=self.robot_side, y=self.robot_side, z=0.0),    
+            Point32(x=self.robot_side, y=-self.robot_side, z=0.0),   
+            Point32(x=-self.robot_side, y=-self.robot_side, z=0.0)   
         ]
 
-        self.square_shape = [
-            Point32(x=-self.half_size, y=self.half_size, z=0.0), 
-            Point32(x=self.half_size, y=self.half_size, z=0.0),    
-            Point32(x=self.half_size, y=-self.half_size, z=0.0),   
-            Point32(x=-self.half_size, y=-self.half_size, z=0.0)   
+        self.cart_shape = [
+            Point32(x=-self.cart_side, y=self.cart_side, z=0.0), 
+            Point32(x=self.cart_side, y=self.cart_side, z=0.0),    
+            Point32(x=self.cart_side, y=-self.cart_side, z=0.0),   
+            Point32(x=-self.cart_side, y=-self.cart_side, z=0.0)   
         ]
 
     def publish_polygon(self, mode):
         polygon_msg = Polygon()
-        if (mode == 'circle'):
-            polygon_msg.points = self.circle_shape
-        elif (mode == 'square'):
-            polygon_msg.points = self.square_shape
+        if (mode == 'robot'):
+            polygon_msg.points = self.robot_shape
+        elif (mode == 'cart'):
+            polygon_msg.points = self.cart_shape
         else:
             self.get_logger().info(f'Invalid shape type {mode}')
             return None
         self.global_publisher_.publish(polygon_msg)
         self.local_publisher_.publish(polygon_msg)
         self.get_logger().info(f'Publishing polygon footprint of type {mode}')
+        time.sleep(1)
         return None
 
 class ElevatorPublisher(Node):
@@ -97,8 +82,8 @@ class ElevatorPublisher(Node):
 class RobotMover(Node):
     def __init__(self):
         super().__init__('robot_mover')
-        self.publisher_ = self.create_publisher(Twist, '/diffbot_base_controller/cmd_vel_unstamped', 10)
-        self.duration = 6  # Set the duration for which the robot should move back
+        self.publisher_ = self.create_publisher(Twist, '/cmd_vel', 10)
+        self.duration = 8  # Set the duration for which the robot should move back
 
     def move_back(self):
         # Start time
@@ -106,7 +91,7 @@ class RobotMover(Node):
 
         # Publish a message to move the robot backwards
         msg = Twist()
-        msg.linear.x = -0.25  # Move backwards
+        msg.linear.x = -0.2  # Move backwards
         self.publisher_.publish(msg)
         self.get_logger().info('Moving the robot backwards')
 
@@ -121,9 +106,9 @@ class RobotMover(Node):
 
 # Shelf positions for picking
 shelf_positions = {
-    "init": [-2.54849, -0.278804, -0.00120911, 0.999999],
-    "loading_position": [1.85362, -0.193069, -0.699828, 0.714312],
-    "shipping_position": [-0.591861, 0.867609, 0.715875, 0.698228]
+    "init": [0.15, 0.0, 0.0, 1.0],
+    "loading_position": [4.50, -1.00, -0.60, 0.72],
+    "shipping_position": [2.20, 1.0, 0.74, 0.72]
     }
 
 def main():
@@ -217,7 +202,7 @@ def main():
     if n + 1 == 5: exit(-1)
 
     # Handle lift and backwards movement
-    footprint_publisher.publish_polygon('square')
+    footprint_publisher.publish_polygon('cart')
     mover = RobotMover()
     mover.move_back()
 
@@ -249,7 +234,7 @@ def main():
     result = navigator.getResult()
     if result == TaskResult.SUCCEEDED:
         print('Unloading the shelf.')
-        footprint_publisher.publish_polygon('circle')
+        footprint_publisher.publish_polygon('robot')
         elevator_publisher.drop()
         mover.move_back()
 
