@@ -85,7 +85,7 @@ private:
     }
 
     // 3) Approach the cart_frame synchronously
-    rclcpp::Rate rate(5); // 5 Hz loop
+    rclcpp::Rate rate(10); // 10 Hz loop
     while (rclcpp::ok()) {
       geometry_msgs::msg::TransformStamped t;
       try {
