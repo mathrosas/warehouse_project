@@ -2,22 +2,26 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import Node
-from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration, PythonExpression
 
 def generate_launch_description():
 
-    controller_yaml = os.path.join(get_package_share_directory('path_planner_server'), 'config', 'controller_sim.yaml')
-    bt_navigator_yaml = os.path.join(get_package_share_directory('path_planner_server'), 'config', 'bt_navigator_sim.yaml')
-    planner_yaml = os.path.join(get_package_share_directory('path_planner_server'), 'config', 'planner_sim.yaml')
-    recovery_yaml = os.path.join(get_package_share_directory('path_planner_server'), 'config', 'recoveries_sim.yaml')
-    filters_yaml = os.path.join(get_package_share_directory('path_planner_server'), 'config', 'filters_sim.yaml')
+    use_sim_time = LaunchConfiguration('use_sim_time', default='True')
 
-    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+    config_dir = os.path.join(get_package_share_directory('path_planner_server'), 'config')
+    
+    controller_yaml = [config_dir, '/', PythonExpression(["'controller_sim.yaml' if '", use_sim_time, "'.lower() == 'true' else 'controller_real.yaml'"])]
+    bt_navigator_yaml = [config_dir, '/', PythonExpression(["'bt_navigator_sim.yaml' if '", use_sim_time, "'.lower() == 'true' else 'bt_navigator_real.yaml'"])]
+    planner_yaml = [config_dir, '/', PythonExpression(["'planner_sim.yaml' if '", use_sim_time, "'.lower() == 'true' else 'planner_real.yaml'"])]
+    recovery_yaml = [config_dir, '/', PythonExpression(["'recoveries_sim.yaml' if '", use_sim_time, "'.lower() == 'true' else 'recoveries_real.yaml'"])]
+    filters_yaml = [config_dir, '/', PythonExpression(["'filters_sim.yaml' if '", use_sim_time, "'.lower() == 'true' else 'filters_real.yaml'"])]
 
     rviz_config_dir = os.path.join(get_package_share_directory('path_planner_server'), 'rviz', 'pathplanning.rviz')
+
+    cmd_vel = PythonExpression(["'diffbot_base_controller/cmd_vel_unstamped' if '", use_sim_time, "'.lower() == 'true' else '/cmd_vel'"])
     
-    return LaunchDescription([     
+    return LaunchDescription([
         
         DeclareLaunchArgument(
             'use_sim_time',
@@ -31,7 +35,7 @@ def generate_launch_description():
             name='controller_server',
             output='screen',
             parameters=[controller_yaml, {'use_sim_time': use_sim_time}],
-            remappings=[('/cmd_vel', 'diffbot_base_controller/cmd_vel_unstamped')]
+            remappings=[('/cmd_vel', cmd_vel)]
         ),
 
         Node(
@@ -47,7 +51,7 @@ def generate_launch_description():
             executable='behavior_server',
             name='behavior_server',
             parameters=[recovery_yaml, {'use_sim_time': use_sim_time}],
-            remappings=[('/cmd_vel', 'diffbot_base_controller/cmd_vel_unstamped')],
+            remappings=[('/cmd_vel', cmd_vel)],
             output='screen'
         ),
 

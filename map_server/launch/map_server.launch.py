@@ -7,11 +7,11 @@ from launch.substitutions import LaunchConfiguration, PythonExpression
 
 def generate_launch_description():
 
-    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+    map_file_name = LaunchConfiguration('map_file', default='warehouse_map_sim.yaml')
+    map_dir = get_package_share_directory('map_server') + '/config'
+    map_file = [map_dir, '/', map_file_name]
 
-    map_dir   = get_package_share_directory('map_server') + '/config'
-    map_file_name = PythonExpression(["'warehouse_map_sim.yaml' if '", use_sim_time, "'.lower() == 'true' else 'warehouse_map_real.yaml'"])
-    map_file  = [ map_dir, '/', map_file_name ]
+    use_sim_time = PythonExpression(["'true' if '", map_file_name, "'.lower().endswith('sim.yaml') else 'false'"])
     
     rviz_config_dir = os.path.join(get_package_share_directory('map_server'), 'rviz', 'map_display.rviz')
 

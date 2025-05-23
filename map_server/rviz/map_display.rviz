@@ -6,10 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /Map1
         - /Map1/Topic1
-        - /LaserScan1
-        - /TF1
       Splitter Ratio: 0.5
     Tree Height: 553
   - Class: rviz_common/Selection
@@ -111,26 +108,52 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        odom:
-          Value: false
         robot_base_docking_contact_link:
           Value: false
         robot_base_footprint:
           Value: true
         robot_base_link:
           Value: false
-        robot_evelator_base_link:
-          Value: false
+        robot_docking_station_laser:
+          Value: true
+        robot_docking_station_laser_noisy:
+          Value: true
+        robot_docking_station_laser_noisy_0:
+          Value: true
+        robot_elevator_base_link:
+          Value: true
+        robot_elevator_platform_link:
+          Value: true
         robot_front_cover_link:
           Value: false
         robot_front_laser_base_link:
           Value: false
+        robot_front_laser_link:
+          Value: true
+        robot_front_rgbd_camera_depth_frame:
+          Value: true
+        robot_front_rgbd_camera_depth_optical_frame:
+          Value: true
+        robot_front_rgbd_camera_link:
+          Value: true
+        robot_front_rgbd_camera_rgb_base_link:
+          Value: true
+        robot_front_rgbd_camera_rgb_optical_frame:
+          Value: true
+        robot_imu_link:
+          Value: true
+        robot_left_wheel_link:
+          Value: true
+        robot_odom:
+          Value: true
         robot_omni_backwheel_link:
           Value: false
         robot_omni_front_leftwheel_link:
           Value: false
         robot_omni_front_rightwheel_link:
           Value: false
+        robot_right_wheel_link:
+          Value: true
         robot_top_cover_link:
           Value: false
       Marker Scale: 1
@@ -188,25 +211,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 14.423686027526855
+      Distance: 10
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 2.7809693813323975
-        Y: -0.7914433479309082
-        Z: -0.024746572598814964
+        X: 2.5105631351470947
+        Y: -0.8528993129730225
+        Z: -0.02447615936398506
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.515397548675537
+      Pitch: 1.5697963237762451
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 6.233584403991699
+      Yaw: 0
     Saved: ~
 Window Geometry:
   Displays:
