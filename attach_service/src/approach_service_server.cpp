@@ -50,7 +50,7 @@ private:
     leg_indices_.clear();
     bool in_blob = false;
     int blob_start = 0;
-    const double INT_THRESH = 3500.0;
+    const double INT_THRESH = 4000.0;
     for (int i = 0; i < (int)last_intensities_.size(); ++i) {
       if (last_intensities_[i] > INT_THRESH) {
         if (!in_blob) {
@@ -112,8 +112,8 @@ private:
 
       // Publish command
       geometry_msgs::msg::Twist cmd;
-      cmd.linear.x = 0.2;
-      cmd.angular.z = -0.5 * yaw_err;
+      cmd.linear.x = 0.1;
+      cmd.angular.z = -0.1 * yaw_err;
       vel_pub_->publish(cmd);
       rate.sleep();
     }
@@ -122,6 +122,10 @@ private:
     RCLCPP_INFO(this->get_logger(), "Approach complete");
     std_msgs::msg::String up_msg;
     up_msg.data = "up";
+    elevator_pub_->publish(up_msg);
+    elevator_pub_->publish(up_msg);
+    elevator_pub_->publish(up_msg);
+    elevator_pub_->publish(up_msg);
     elevator_pub_->publish(up_msg);
 
     response->complete = true;

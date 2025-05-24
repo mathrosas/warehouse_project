@@ -68,12 +68,20 @@ class ElevatorPublisher(Node):
     def drop(self):
         msg = String()
         self.publisher_.publish(msg)
+        self.publisher_.publish(msg)
+        self.publisher_.publish(msg)
+        self.publisher_.publish(msg)
+        self.publisher_.publish(msg)
         time.sleep(6)
         self.get_logger().info(f'Shelf unloaded')
         return None
 
     def lift(self):
         msg = String()
+        self.lift_publisher_.publish(msg)
+        self.lift_publisher_.publish(msg)
+        self.lift_publisher_.publish(msg)
+        self.lift_publisher_.publish(msg)
         self.lift_publisher_.publish(msg)
         time.sleep(6)
         self.get_logger().info(f'Shelf loaded')
@@ -107,8 +115,8 @@ class RobotMover(Node):
 # Shelf positions for picking
 shelf_positions = {
     "init": [0.15, 0.0, 0.0, 1.0],
-    "loading_position": [4.50, -1.00, -0.60, 0.72],
-    "shipping_position": [2.20, 1.0, 0.74, 0.72]
+    "loading_position": [4.30, -1.00, -0.70, 0.70],
+    "shipping_position": [2.20, 1.0, 0.70, 0.70]
     }
 
 def main():
