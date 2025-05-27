@@ -115,7 +115,7 @@ private:
       // Publish command
       geometry_msgs::msg::Twist cmd;
       cmd.linear.x = 0.2;
-      cmd.angular.z = -0.5 * yaw_err;
+      cmd.angular.z = -0.2 * yaw_err;
       vel_pub_->publish(cmd);
       rate.sleep();
     }
