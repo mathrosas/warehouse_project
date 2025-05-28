@@ -93,7 +93,7 @@ private:
         continue;
       }
 
-      double x = t.transform.translation.x + 0.3;
+      double x = t.transform.translation.x + 0.5;
       double y = t.transform.translation.y;
       double dist = std::hypot(x, y);
       double yaw = std::atan2(y, x);
@@ -104,7 +104,7 @@ private:
       }
 
       cmd.linear.x = 0.2;
-      cmd.angular.z = -0.3 * yaw;
+      cmd.angular.z = 0.6 * yaw;
       vel_pub_->publish(cmd);
       rate.sleep();
     }

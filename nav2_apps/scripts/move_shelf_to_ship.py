@@ -7,6 +7,8 @@ from geometry_msgs.msg import Polygon, Point32, PoseStamped, Twist
 from std_msgs.msg import String
 
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
+from tf2_ros import Buffer, TransformListener
+
 
 # Client for shelf lifting service
 class ClientAsync(Node):
@@ -83,7 +85,7 @@ class RobotMover(Node):
     def __init__(self):
         super().__init__('robot_mover')
         self.publisher_ = self.create_publisher(Twist, '/diffbot_base_controller/cmd_vel_unstamped', 10)
-        self.duration = 8  # Set the duration for which the robot should move back
+        self.duration = 10  # Set the duration for which the robot should move back
 
     def move_back(self):
         # Start time
@@ -92,6 +94,7 @@ class RobotMover(Node):
         # Publish a message to move the robot backwards
         msg = Twist()
         msg.linear.x = -0.2  # Move backwards
+        msg.angular.z = 0.05
         self.publisher_.publish(msg)
         self.get_logger().info('Moving the robot backwards')
 
@@ -108,7 +111,7 @@ class RobotMover(Node):
 shelf_positions = {
     "init": [0.0, 0.0, 0.0, 1.0],
     "loading_position": [5.70, 0.00, -0.70, 0.72],
-    "shipping_position": [2.45, 1.40, 0.70, 0.72]
+    "shipping_position": [2.45, 1.42, 0.70, 0.72]
     }
 
 def main():
@@ -169,6 +172,9 @@ def main():
             if n + 1 == 5: exit(-1)
             time.sleep(1.0)
 
+    while not navigator.isTaskComplete():
+        pass
+
     # Instance the elevator publisher
     elevator_publisher = ElevatorPublisher()
 
@@ -206,9 +212,6 @@ def main():
     mover = RobotMover()
     mover.move_back()
 
-    while not navigator.isTaskComplete():
-        pass
-    
     # Got to the shipping position
     request_item_location = 'shipping_position'
     shelf_item_pose = PoseStamped()
@@ -219,6 +222,7 @@ def main():
     shelf_item_pose.pose.orientation.z = shelf_positions[request_item_location][2]
     shelf_item_pose.pose.orientation.w = shelf_positions[request_item_location][3]
     print('Moving robot to ' + request_item_location + '.')
+    navigator.waitUntilNav2Active()
     navigator.goToPose(shelf_item_pose)
 
     i = 0
@@ -247,7 +251,6 @@ def main():
     elif result == TaskResult.FAILED:
         print('Task at ' + request_item_location + ' failed!')
         exit(-1)
-
 
      # Got to the init position
     request_item_location = 'init'

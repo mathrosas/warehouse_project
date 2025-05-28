@@ -84,9 +84,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 4613
+      Max Intensity: 8000
       Min Color: 0; 0; 0
-      Min Intensity: 403
+      Min Intensity: 0
       Name: LaserScan
       Position Transformer: XYZ
       Selectable: true
@@ -110,51 +110,25 @@ Visualization Manager:
         All Enabled: true
         map:
           Value: true
+        odom:
+          Value: true
         robot_base_docking_contact_link:
           Value: true
         robot_base_footprint:
           Value: true
         robot_base_link:
           Value: true
-        robot_docking_station_laser:
-          Value: true
-        robot_docking_station_laser_noisy:
-          Value: true
-        robot_docking_station_laser_noisy_0:
-          Value: true
-        robot_elevator_base_link:
-          Value: true
-        robot_elevator_platform_link:
+        robot_evelator_base_link:
           Value: true
         robot_front_cover_link:
           Value: true
         robot_front_laser_base_link:
-          Value: true
-        robot_front_laser_link:
-          Value: true
-        robot_front_rgbd_camera_depth_frame:
-          Value: true
-        robot_front_rgbd_camera_depth_optical_frame:
-          Value: true
-        robot_front_rgbd_camera_link:
-          Value: true
-        robot_front_rgbd_camera_rgb_base_link:
-          Value: true
-        robot_front_rgbd_camera_rgb_optical_frame:
-          Value: true
-        robot_imu_link:
-          Value: true
-        robot_left_wheel_link:
-          Value: true
-        robot_odom:
           Value: true
         robot_omni_backwheel_link:
           Value: true
         robot_omni_front_leftwheel_link:
           Value: true
         robot_omni_front_rightwheel_link:
-          Value: true
-        robot_right_wheel_link:
           Value: true
         robot_top_cover_link:
           Value: true
@@ -165,28 +139,15 @@ Visualization Manager:
       Show Names: true
       Tree:
         map:
-          robot_odom:
+          odom:
             robot_base_footprint:
               robot_base_link:
-                robot_elevator_base_link:
-                  robot_elevator_platform_link:
-                    {}
+                robot_evelator_base_link:
+                  {}
                 robot_front_cover_link:
                   robot_base_docking_contact_link:
                     {}
                 robot_front_laser_base_link:
-                  {}
-                robot_front_rgbd_camera_rgb_base_link:
-                  robot_front_rgbd_camera_depth_frame:
-                    robot_front_rgbd_camera_depth_optical_frame:
-                      {}
-                  robot_front_rgbd_camera_link:
-                    {}
-                  robot_front_rgbd_camera_rgb_optical_frame:
-                    {}
-                robot_imu_link:
-                  {}
-                robot_left_wheel_link:
                   {}
                 robot_omni_backwheel_link:
                   {}
@@ -194,18 +155,8 @@ Visualization Manager:
                   {}
                 robot_omni_front_rightwheel_link:
                   {}
-                robot_right_wheel_link:
-                  {}
-              robot_front_laser_link:
-                {}
               robot_top_cover_link:
                 {}
-            robot_docking_station_laser:
-              {}
-            robot_docking_station_laser_noisy:
-              {}
-            robot_docking_station_laser_noisy_0:
-              {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -226,6 +177,64 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        robot_base_docking_contact_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        robot_base_footprint:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        robot_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        robot_evelator_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        robot_evelator_platform_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        robot_front_cover_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        robot_front_laser_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        robot_left_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        robot_omni_backwheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        robot_omni_front_leftwheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        robot_omni_front_rightwheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        robot_right_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        robot_top_cover_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
       Mass Properties:
         Inertia: false
         Mass: false
@@ -234,6 +243,45 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Angle Tolerance: 0.3100000023841858
+      Class: rviz_default_plugins/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
+      Enabled: true
+      Keep: 250
+      Name: Odometry
+      Position Tolerance: 0.10000000149011612
+      Shape:
+        Alpha: 0.5
+        Axes Length: 1
+        Axes Radius: 0.10000000149011612
+        Color: 255; 255; 0
+        Head Length: 0.25
+        Head Radius: 0.125
+        Shaft Length: 0.5
+        Shaft Radius: 0.02500000037252903
+        Value: Arrow
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /odom
+      Value: true
     - Alpha: 1
       Axes Length: 1
       Axes Radius: 0.10000000149011612
@@ -462,9 +510,9 @@ Visualization Manager:
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 2.2745091915130615
-        Y: -0.8228780031204224
-        Z: -0.11166265606880188
+        X: 2.7538657188415527
+        Y: -0.8966251611709595
+        Z: -0.11214202642440796
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
