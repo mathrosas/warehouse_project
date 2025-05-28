@@ -244,7 +244,7 @@ Visualization Manager:
                 {}
       Update Interval: 0
       Value: true
-    - Angle Tolerance: 0.10000000149011612
+    - Angle Tolerance: 0.3100000023841858
       Class: rviz_default_plugins/Odometry
       Covariance:
         Orientation:
@@ -262,25 +262,25 @@ Visualization Manager:
           Value: true
         Value: true
       Enabled: true
-      Keep: 100
+      Keep: 250
       Name: Odometry
       Position Tolerance: 0.10000000149011612
       Shape:
-        Alpha: 1
+        Alpha: 0.5
         Axes Length: 1
         Axes Radius: 0.10000000149011612
         Color: 255; 255; 0
-        Head Length: 0.30000001192092896
-        Head Radius: 0.10000000149011612
-        Shaft Length: 1
-        Shaft Radius: 0.05000000074505806
+        Head Length: 0.25
+        Head Radius: 0.125
+        Shaft Length: 0.5
+        Shaft Radius: 0.02500000037252903
         Value: Arrow
       Topic:
         Depth: 5
         Durability Policy: Volatile
         Filter size: 10
         History Policy: Keep Last
-        Reliability Policy: Best Effort
+        Reliability Policy: Reliable
         Value: /diffbot_base_controller/odom
       Value: true
     - Alpha: 1

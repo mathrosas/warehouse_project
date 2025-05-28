@@ -83,7 +83,7 @@ class RobotMover(Node):
     def __init__(self):
         super().__init__('robot_mover')
         self.publisher_ = self.create_publisher(Twist, '/diffbot_base_controller/cmd_vel_unstamped', 10)
-        self.duration = 7  # Set the duration for which the robot should move back
+        self.duration = 8  # Set the duration for which the robot should move back
 
     def move_back(self):
         # Start time
@@ -107,8 +107,8 @@ class RobotMover(Node):
 # Shelf positions for picking
 shelf_positions = {
     "init": [0.0, 0.0, 0.0, 1.0],
-    "loading_position": [5.60, 0.00, -0.60, 0.72],
-    "shipping_position": [2.46, 1.42, 0.60, 0.72]
+    "loading_position": [5.70, 0.00, -0.70, 0.72],
+    "shipping_position": [2.45, 1.40, 0.70, 0.72]
     }
 
 def main():
