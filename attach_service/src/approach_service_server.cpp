@@ -32,8 +32,8 @@ public:
     laser_sub_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
         "/scan", 10, std::bind(&ApproachService::laser_callback, this, _1));
 
-    vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>(
-        "/diffbot_base_controller/cmd_vel_unstamped", 10);
+    vel_pub_ =
+        this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
 
     RCLCPP_INFO(this->get_logger(), "Attach service is ready.");
   }
@@ -47,7 +47,7 @@ private:
     leg_indices_.clear();
     bool in_blob = false;
     int blob_start = 0;
-    const double INTENSITY_THRESH = 8000.0;
+    const double INTENSITY_THRESH = 4500.0;
 
     for (int i = 0; i < static_cast<int>(last_intensities_.size()); ++i) {
       if (last_intensities_[i] >= INTENSITY_THRESH) {

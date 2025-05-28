@@ -14,7 +14,7 @@ from tf2_ros import Buffer, TransformListener
 class ClientAsync(Node):
     def __init__(self):
         super().__init__('go_to_loading')
-        self.client = self.create_client(GoToLoading, 'attach_service')
+        self.client = self.create_client(GoToLoading, 'approach_service')
         while not self.client.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('Service not available, waiting again...')
 
@@ -102,7 +102,7 @@ class RobotMover(Node):
         # Publish a message to move the robot backwards
         msg = Twist()
         msg.linear.x = -0.2  # Move backwards
-        msg.angular.z = 0.05
+        msg.angular.z = 0.1
         self.publisher_.publish(msg)
         self.get_logger().info('Moving the robot backwards')
 
@@ -118,7 +118,7 @@ class RobotMover(Node):
 # Shelf positions for picking
 shelf_positions = {
     "init": [0.15, 0.0, 0.0, 1.0],
-    "loading_position": [4.30, -1.00, -0.70, 0.70],
+    "loading_position": [4.30, 0.00, -0.70, 0.70],
     "shipping_position": [2.20, 1.0, 0.70, 0.70]
     }
 
