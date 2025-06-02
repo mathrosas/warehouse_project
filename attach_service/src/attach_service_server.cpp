@@ -98,7 +98,7 @@ private:
       double dist = std::hypot(x, y);
       double yaw = std::atan2(y, x);
 
-      if (dist <= 0.1) {
+      if (dist < 0.15) {
         // reached goal
         break;
       }

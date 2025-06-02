@@ -8,10 +8,6 @@ from std_msgs.msg import String
 
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 
-from rclpy.node import Node
-from rcl_interfaces.srv import SetParameters
-from rclpy.parameter import Parameter
-
 
 # Client for shelf lifting service
 class ClientAsync(Node):
@@ -109,64 +105,12 @@ class RobotMover(Node):
         # Stop the robot by publishing zero velocities
         self.publisher_.publish(Twist())
         self.get_logger().info('Stopping the robot')
-    
-    def reconfigure_parameters(self, new_value: float):
-        # 1) make a throw-away node
-        param_node = rclpy.create_node('param_changer')
-
-        # 2) create the two clients
-        ctrl_cli = param_node.create_client(
-            SetParameters, '/controller_server/set_parameters')
-        plan_cli = param_node.create_client(
-            SetParameters,  '/planner_server/set_parameters')
-
-        # 3) wait for them to show up
-        while not ctrl_cli.wait_for_service(timeout_sec=1.0):
-            param_node.get_logger().info('waiting for /controller_server/set_parameters…')
-        while not plan_cli.wait_for_service(timeout_sec=1.0):
-            param_node.get_logger().info('waiting for /planner_server/set_parameters…')
-
-        # 4) build requests
-        req_ctrl = SetParameters.Request()
-        req_ctrl.parameters = [
-            Parameter('obstacle_min_range', Parameter.Type.DOUBLE, new_value)
-            .to_parameter_msg()
-        ]
-        req_plan = SetParameters.Request()
-        req_plan.parameters = [
-            Parameter('raytrace_min_range', Parameter.Type.DOUBLE, new_value)
-            .to_parameter_msg()
-        ]
-
-        # 5) call the services
-        fut1 = ctrl_cli.call_async(req_ctrl)
-        fut2 = plan_cli.call_async(req_plan)
-
-        # 6) block until done
-        rclpy.spin_until_future_complete(param_node, fut1)
-        rclpy.spin_until_future_complete(param_node, fut2)
-
-        # 7) report results
-        res1 = fut1.result()
-        res2 = fut2.result()
-        ok_ctrl = res1.results[0].successful
-        ok_plan = res2.results[0].successful
-        reason_ctrl = res1.results[0].reason
-        reason_plan = res2.results[0].reason
-
-        param_node.get_logger().info(
-            f'obstacle_min_range set to {new_value}? {ok_ctrl} ({reason_ctrl})')
-        param_node.get_logger().info(
-            f'raytrace_min_range set to {new_value}? {ok_plan} ({reason_plan})')
-
-        # 8) clean up
-        param_node.destroy_node()
 
 # Shelf positions for picking
 shelf_positions = {
     "init": [0.0, 0.0, 0.0, 1.0],
     "loading_position": [5.70, 0.00, -0.70, 0.72],
-    "shipping_position": [2.45, 1.42, 0.70, 0.72]
+    "shipping_position": [2.45, 1.42, 0.72, 0.72]
     }
 
 def main():
@@ -265,7 +209,6 @@ def main():
     # Handle lift and backwards movement
     footprint_publisher.publish_polygon('cart')
     mover = RobotMover()
-    mover.reconfigure_parameters(0.450)
     mover.move_back()
 
     # Got to the shipping position
@@ -296,7 +239,6 @@ def main():
         print('Unloading the shelf.')
         footprint_publisher.publish_polygon('robot')
         elevator_publisher.drop()
-        mover.reconfigure_parameters(0.0)
         mover.move_back()
 
     elif result == TaskResult.CANCELED:
